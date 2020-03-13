@@ -429,10 +429,17 @@ new Vue({
             console.log("contract ", contractABI);
             let contract = await contractABI.at(address)
             console.log(contract);
-            const createHouse = contract.createHouse(this.id, this.price, this.address, this.surface, this.description, this.hashDocuments, { from: web3.eth.accounts[0] }, function (txHash) {
+            var id = Math.ceil(Math.random()* 100 +1);
+            var hashDocuments = Math.ceil(Math.random() * 100 + 1);
+
+            contract.createHouse(id, this.price, this.address, this.surface, this.description, hashDocuments, { from: web3.eth.accounts[0] }, function (txHash) {
                 console.log(txHash);
             });
-            console.log(createHouse);
+            
+            const getOneHouse = contract.getHouse(id, function (error) {
+                console.log(error);
+            });
+            console.log(getOneHouse);
             return contract;
         },
         async getFormValues() {
@@ -458,9 +465,6 @@ new Vue({
         },
     }
 });
-
-
-
 
 /*checkForm: function(e) {
     this.price = checkForm.form.price;
