@@ -21,6 +21,7 @@ contract MarketContract {
 
     event logger(uint);
     event logger(bool);
+    event logger(address);
 
     House[] public houses;
     House public getHouseForSale;
@@ -61,8 +62,15 @@ contract MarketContract {
     }
 
     // Vérifier le prix de la maison
-    function checkPriceHouse(uint _idHome) private view returns (bool) {
-        if (msg.value == houses[_idHome].price) return true;
+    function checkPriceHouse(uint _idHouse) private returns (bool) {
+        House memory house;
+        for(uint i = 0; i < houses.length; i++) {
+            if(houses[i].idHome == _idHouse) {
+               house = houses[i];
+            }
+        }
+
+        if (msg.value == house.price) return true;
         return false;
     }
 
@@ -90,23 +98,18 @@ contract MarketContract {
     // address payable => transférer
     // fct public payable => recevoir
     function buyingHouse(uint _idHome) public payable returns (bool) {
-        emit logger(checkHouseForSale(_idHome));
+        if(checkHouseForSale(_idHome) && checkPriceHouse(_idHome)) { // checker si la maison est en vente, si le montant est correct
+            //_addressBuyer.transfer(houses[_idHome].price); 
+            require(msg.value != houses[_idHome].price);             // transfer ethers
+            ownerToHouse[msg.sender] = _idHome;                      // transfert de propriété: obtenir la maison du vendeur et mettre l'addresse de l'acheteur
+            removeAtIndex(_idHome);                                  // enlever la maison de la liste de ventes
+            emit logger(checkHouseForSale(_idHome));
             emit logger(checkPriceHouse(_idHome));
-        //if(checkHouseForSale(_idHome) && checkPriceHouse(_idHome)) {    // checker si la maison est en vente, si le montant est correct
-        //     //_addressBuyer.transfer(houses[_idHome].price);            // transfer ethers
-            
-
-
-        //     require(msg.value != houses[_idHome].price);
-        //     ownerToHouse[msg.sender] = _idHome;                      // transfert de propriété: obtenir la maison du vendeur et mettre l'addresse de l'acheteur
-        //     removeAtIndex(_idHome);                                     // enlever la maison de la liste de ventes
-        //     emit logger(checkHouseForSale(_idHome));
-        //     emit logger(checkPriceHouse(_idHome));
-        //     return true;
-        // }
-        // emit logger(checkHouseForSale(_idHome));
-        // emit logger(checkPriceHouse(_idHome));
-        // return false;
+            return true;
+        }
+        emit logger(checkHouseForSale(_idHome));
+        emit logger(checkPriceHouse(_idHome));
+        return false;
     }
 
     // Get all details of houses
@@ -132,8 +135,7 @@ contract MarketContract {
         }
     }
 
-    // TESTS UNITAIRES
-    // createHouse OK
-    // mettre en vente
-    // achat
+    function getBalance() public view returns (uint) {
+        return address(uint160(address(this))).balance;
+    }
 }
