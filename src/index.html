@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>Market Place</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/app.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.js"></script>
+
+
+</head>
+<body>
+<h3 align="center" id="title">Market Place</h3>
+<div class="row" style="background-image: url('img/pouet.jpg');height: 100%;background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;">
+    <div id="createHouseForm" class="col-xs-1">
+        <form>
+            <div class="modal-body">
+                <h4>Price</h4>
+                <input id="price" ref="price" type="text" placeholder="Price of your house" required>
+                <h4>Address</h4>
+                <input id="address" ref="address" type="text" placeholder="Address of your house" required>
+                <h4>Surface</h4>
+                <input id="surface" ref="surface" type="text" placeholder="Number of m²" required>
+                <h4>Description</h4>
+                <textArea id="description" ref="description" placeholder="A little description of your house"></textArea><br>
+
+                <label id="error" v-if="!fields">{{errors}}</label>
+
+                <button @click.prevent="getFormValues()">
+                    Validate
+                </button>
+            </div>
+        </form>
+    </div>
+    <div id="houseList">
+        <div v-for="house in houses">
+            <div class="container" >
+                <div class="row">
+                    <div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading" style="background-color: #28023F">
+                                <h3 class="panel-title" style="color: white">House : {{ house.id }}</h3>
+                            </div>
+                            <div id="wrapper" class="panel-body" style="background-color: #EFD6FF">
+                                <div  id="app" class="control">
+                                    <h4>Price</h4>
+                                    <strong>{{ house.price }}</strong>
+                                </div>
+                                <div id="pouet">
+                                    <h4>Address</h4>
+                                    <strong>{{ house.addressMarket }}</strong>
+                                    <h4>Surface</h4>
+                                    <strong>{{ house.squareMeter }}</strong>
+                                    <h4>Description</h4>
+                                    <strong>{{ house.description }}</strong>
+                                </div>
+                               <img src="img/house1.jpg">
+                                <br><br>
+                                <button class="btn btn-primary" id="transferButton" type="button">Buy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="js/bootstrap.min.js"></script>
+<script src="js/web3.min.js"></script>
+<script src="js/truffle-contract.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
+</body>
+</html>
