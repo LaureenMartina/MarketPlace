@@ -2,9 +2,8 @@ var Web3 = require("web3");
 
 let result = null;
 var web3js = window.web3;
-var web3 = new Web3(web3js.currentProvider);
+const web3 = new Web3(web3js.currentProvider);
 
-//var contract = require('truffle-contract');
 const abi = [
     {
         "anonymous": false,
@@ -400,31 +399,13 @@ const abi = [
 
 const address = "0x147a5d199c6aa307abdd77e487b125596dd67aa2";
 
-//const Account = contract(Account_artifacts);
-
-/*var web3js = window.web3;
-var web3 = new Web3(web3js.currentProvider);
-
-Account.setProvider(web3.currentProvider);
-if (typeof Account.currentProvider.sendAsync !== "function") {
-    Account.currentProvider.sendAsync = function() {
-        return Account.currentProvider.send.apply(
-            Account.currentProvider, arguments
-        );
-    };
-}
-
-Account.deployed();
-Account.methods.getHouse().call();*/
-
-
 var houseList = new Vue({
     el: "#houseList",
     data: {
         houses: [
-            { id: "Blue house", price: "250 000", adressMarket: "6 rue du trouffion", squareMeter: "174m²", description: "pouet"},
-            { id: "Blue house", price: "250 000", adressMarket: "6 rue du trouffion", squareMeter: "174m²", description: "pouet"},
-            { id: "Blue house", price: "250 000", adressMarket: "6 rue du trouffion", squareMeter: "174m²", description: "pouet"}
+            { id: "Blue house", price: "250 000", adressMarket: "6 rue du trouffion", squareMeter: "174m²", description: "pouet" },
+            { id: "Blue house", price: "250 000", adressMarket: "6 rue du trouffion", squareMeter: "174m²", description: "pouet" },
+            { id: "Blue house", price: "250 000", adressMarket: "6 rue du trouffion", squareMeter: "174m²", description: "pouet" }
         ]
     }
 });
@@ -442,10 +423,22 @@ new Vue({
         fields: false
     },
     methods: {
-        getFormValues () {
+        async getContract() {
+            console.log(web3);
+            var contractABI = await web3.eth.contract(abi);
+            console.log("contract ", contractABI);
+            let contract = await contractABI.at(address)
+            console.log(contract);
+            const createHouse = contract.createHouse(this.id, this.price, this.address, this.surface, this.description, this.hashDocuments, { from: web3.eth.accounts[0] }, function (txHash) {
+                console.log(txHash);
+            });
+            console.log(createHouse);
+            return contract;
+        },
+        async getFormValues() {
             console.log("abi : ", abi);
 
-            if(this.$refs.price.value && this.$refs.address.value && this.$refs.surface.value) {
+            if (this.$refs.price.value && this.$refs.address.value && this.$refs.surface.value) {
                 this.id = Math.ceil((Math.random() * 100) + 1);
                 this.hashDocuments = Math.ceil((Math.random() * 100) + 1);
                 this.price = this.$refs.price.value;
@@ -459,20 +452,10 @@ new Vue({
                 this.fields = false;
             }
             console.log(this.errors)
-            result = this.pouet();
-            result.createHouse(this.id, this.price, this.address, this.surface, this.description, this.hashDocuments);
+            result = await this.getContract();
+            //  result.createHouse(this.id, this.price, this.address, this.surface, this.description, this.hashDocuments);
 
         },
-        async pouet() {
-            console.log(web3);
-            var contract =   web3.eth.contract(abi);
-
-            console.log("contract ", contract);
-
-            const br = await contract.methods.getData.call();
-            console.log(br);
-            return result;
-        }
     }
 });
 
